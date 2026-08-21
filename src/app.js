@@ -1,15 +1,17 @@
 const express = require("express")
 
 const app = express()
-/*
-        app.use("/user", (req, res) => {
-    res.send('use function')
-})
 
-*/
+
+
+
+
+
 app.get("/user", (req, res) => {
+    console.log(req.query)
     res.send({ firstName: "Bhavana", lastName: "Battu" })
 })
+
 app.post("/user", (req, res) => {
     res.send("data Saved successfully")
 })
