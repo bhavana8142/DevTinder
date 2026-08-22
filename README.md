@@ -67,3 +67,43 @@ res.send("data Saved successfully")
 }) app.delete("/user", (req, res) => {
 res.send("Data deleted successfully")
 })
+
+# auth,user-middleware
+
+app.use("/admin", adminAuth)
+app.get("/user/login", (req, res) => {
+res.send("used loggedin")
+})
+app.use("/user", userAuth, (req, res) => {
+res.send("user Data")
+
+})
+
+app.get("/admin/getAllData", (req, res) => {
+res.send("send all the Data")
+})
+app.get("/admin/deleteData", (req, res) => {
+res.send("deleted alll the Data")
+})
+
+# error -handling (try,catch)
+
+app.get("/getUserData", (req, res) => {
+try {
+throw new Error("hjdhfuhefjd")
+res.send("send userData")
+
+    }
+    catch (err) {
+        res.status(500).send("please connect support team")
+
+
+    }
+
+})
+// always use below the all routes
+app.use("/", (err, req, res, next) => {
+if (err) {
+res.status(500).send("something went wrong")
+}
+})
