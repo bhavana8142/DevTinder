@@ -23,6 +23,44 @@ app.post("/signup", async (req, res) => {
 
 })
 
+// get user by email 
+app.get("/user", async (req, res) => {
+    const userId = req.body._id
+    try {
+        const users = await User.findById(userId)
+
+        if (users.length === 0) {
+            res.status(500).send("users not found")
+        }
+        else {
+            res.send(users)
+        }
+
+    } catch (err) {
+        res.status(404).send("somwthing went wrong")
+    }
+
+})
+// get data base feed data 
+app.get("/feed", async (req, res) => {
+
+    try {
+        const users = await User.find({})
+
+        if (users.length === 0) {
+            res.status(500).send("users not found")
+        }
+        else {
+            res.send(users)
+        }
+
+    } catch (err) {
+        res.status(404).send("somwthing went wrong")
+    }
+
+})
+
+
 
 
 
