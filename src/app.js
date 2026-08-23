@@ -17,7 +17,11 @@ app.post("/signup", async (req, res) => {
         res.send("data Saved succesfully")
     }
     catch (err) {
-        res.status(500).send("data not saves", err.message)
+        if (err.code === 110) {
+            return res.status(400).send("Email already exists")
+
+        }
+        res.status(500).send("data not saves :" + err.message)
     }
 
 
@@ -78,11 +82,13 @@ app.patch("/user", async (req, res) => {
     const userId = req.body.userId
     const data = req.body
     try {
-        const user = await User.findByIdAndUpdate(userId, data)
+        const user = await User.findByIdAndUpdate(userId, data, {
+            runValidators: true
+        })
         res.send(user)
 
     } catch (err) {
-        res.status(500).send("user couldn't find")
+        res.status(500).send("user couldn't find" + err.message)
     }
 })
 
