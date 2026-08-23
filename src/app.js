@@ -59,7 +59,32 @@ app.get("/feed", async (req, res) => {
     }
 
 })
+// delete the user from db 
+app.delete("/user", async (req, res) => {
 
+    const userId = req.body.userId
+    try {
+        await User.findByIdAndDelete(userId)
+        res.send("user delted succesfully")
+
+    } catch (err) {
+        res.status(500).send("user couldn't find")
+
+    }
+
+})
+
+app.patch("/user", async (req, res) => {
+    const userId = req.body.userId
+    const data = req.body
+    try {
+        const user = await User.findByIdAndUpdate(userId, data)
+        res.send(user)
+
+    } catch (err) {
+        res.status(500).send("user couldn't find")
+    }
+})
 
 
 
