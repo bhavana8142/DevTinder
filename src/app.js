@@ -82,6 +82,17 @@ app.patch("/user", async (req, res) => {
     const userId = req.body.userId
     const data = req.body
     try {
+
+        const ALLOW_UPDATES = ["userId", "photoUrl", "age", "skills", "about"]
+        const isAllowUpdates = Object.keys(data).every((k) => ALLOW_UPDATES.includes(k))
+        if (!isAllowUpdates) {
+            res.status(400).send("update not Allowed")
+        }
+        if (data.skills.length > 10) {
+            res.status(400).send("more than 10 skillsdoesn't allow ")
+        }
+
+
         const user = await User.findByIdAndUpdate(userId, data, {
             runValidators: true
         })
