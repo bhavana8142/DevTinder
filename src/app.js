@@ -1,18 +1,37 @@
 const express = require("express");
 const mongoDB = require("./config/database")
+const bcrypt = require("bcrypt")
+const validator = require("validator")
 
 const app = express();
 const { adminAuth, userAuth } = require("./middleware/auth")
 const User = require("./models/user")
+const { validationSignUpData } = require("./utils/validation")
 
 app.use(express.json())
 
 
 app.post("/signup", async (req, res) => {
-    console.log(req.body)
 
-    const user = new User(req.body)
+
+
+
+
+
+
+
     try {
+        //validation of Data 
+        validationSignUpData(req)
+        const { firstName, lastName, emailId, password } = req.body
+        // Encrypt password
+        const passwordHash = await bcrypt.hash(password, 10)
+        //create instance for user model
+        const user = new User({
+            firstName, lastName, emailId, password: passwordHash
+        })
+
+
         await user.save()
         res.send("data Saved succesfully")
     }
@@ -21,10 +40,33 @@ app.post("/signup", async (req, res) => {
             return res.status(400).send("Email already exists")
 
         }
-        res.status(500).send("data not saves :" + err.message)
+        res.status(500).send("ERROR:" + err.message)
     }
 
 
+})
+
+app.post("/login", async (req, res) => {
+    try {
+        const { emailId, password } = req.body
+        if (!validator.isEmail(emailId)) {
+            throw new Error("Email is not valid")
+        }
+        const user = await User.findOne({ emailId: emailId })
+        if (!user) {
+            throw new Error("Invalid credentials")
+        }
+        const isPasswordVaild = await bcrypt.compare(password, user.password)
+        if (!isPasswordVaild) {
+            throw new Error("Invalid credentiales")
+        } else {
+            res.send("logged succesfully")
+        }
+
+    }
+    catch (err) {
+        res.status(500).send("ERROR:" + err.message)
+    }
 })
 
 // get user by email 
@@ -116,7 +158,7 @@ mongoDB().then(
         });
     }
 ).catch(err => {
-    console.error("data base is connected")
+    console.error("Database connection failed:", err)
 })
 
 
