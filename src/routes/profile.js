@@ -49,5 +49,32 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
         res.status(500).send("Error:" + err.message)
     }
 })
+profileRouter.patch("/profile/change-password", userAuth, async (req, res) => {
+    try {
+        const loggedInUser = req.User
+        if (!loggedInUser) {
+            throw new Error("user is not verified")
+        }
+        else {
+            const { oldpassword, newpassword } = req.body
+            const ispassswordValid = await loggedInUser.passwordValidation(oldpassword)
+            if (!ispassswordValid) {
+                throw new Error("Old password is not valid")
+            }
+            else {
+                loggedInUser.password = newpassword
+                await loggedInUser.save()
+                res.json({
+                    message: `${loggedInUser.firstName} password updated successfully`,
+                    data: loggedInUser
+                })
+            }
+        }
+    }
+    catch (err) {
+        res.status(500).send("Error:" + err.message)
+    }
+}
+)
 
 module.exports = profileRouter 
