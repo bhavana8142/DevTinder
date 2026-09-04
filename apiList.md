@@ -14,7 +14,7 @@
 
 ## CONNECTIONS REQUEST ROUTER
 
-    - POST/request/send/interested/:userId
+    - POST/request/send/:status/:userId
     - POST/request/send/ignored/:usedId
     - POST/request/review/:reqId
     - POST/request/rejected/:reqId
